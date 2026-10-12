@@ -23,7 +23,7 @@ export const DEFAULT_APP_UPDATE: AppUpdateInfo = {
     'إعادة تمهيد شاشة تسجيل دخول الكوادر بالأمان الكامل وتحديث روابط التحميل',
     'مزامنة حية ومباشرة بين لوحة تحكم المدير وتطبيق المستخدمين'
   ],
-  apkUrl: '/Sahtak-Dierhafer-v1.1.apk',
+  apkUrl: 'https://github.com/Baraa-cmd/sahtak-app/releases/download/v1.1/Sahtak-Dierhafer.apk',
   forceUpdate: false
 };
 
