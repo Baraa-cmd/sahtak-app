@@ -1,0 +1,93 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build & Package Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (Node 22 required for Capacitor 8+)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Set up Java JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Generate Persistent Debug Keystore if Needed
+        run: |
+          if [ ! -f android/app/debug.keystore ]; then
+            keytool -genkey -v -keystore android/app/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
+            git config --global user.name "GitHub Actions Bot"
+            git config --global user.email "actions@github.com"
+            git add android/app/debug.keystore
+            git commit -m "chore: add persistent debug.keystore for seamless app updates" || true
+            git push || true
+          fi
+
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses 2>/dev/null || true
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Make Gradlew Executable
+        run: chmod +x android/gradlew
+
+      - name: Build Android APK with Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Prepare APK Output
+        run: |
+          mkdir -p apk-output
+          cp android/app/build/outputs/apk/debug/app-debug.apk apk-output/Sahtak-Dierhafer.apk
+
+      - name: Upload APK as GitHub Run Artifact (Direct Download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sahtak-Dierhafer-APK
+          path: apk-output/Sahtak-Dierhafer.apk
+          retention-days: 30
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v1.0-apk
+          name: "📱 تطبيق صحتك دير حافر (Sahtak Dierhafer APK)"
+          make_latest: true
+          body: |
+            ### 🩺 تطبيق صحتك - دير حافر للأندرويد (Package: com.sahtak.dierhafer)
+            
+            ✅ تم بناء هذا الملف تلقائياً بعد كل تحديث على GitHub.
+            - قم بتحميل ملف **`Sahtak-Dierhafer.apk`** المرفق وتثبيته مباشرة على هاتفك.
+            - التطبيق أصلي بالكامل، يتصل بقاعدة البيانات الحية، ولا يظهر أي إشعارات متصفح خارجية.
+          files: apk-output/Sahtak-Dierhafer.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,130 @@
+name: Build Admin Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-admin-apk:
+    name: Build & Package Admin Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (Node 22 required)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Configure Distinct Package ID & App Name for Admin
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            
+            // 1. Update capacitor.config.ts
+            let capConfig = fs.readFileSync("capacitor.config.ts", "utf8");
+            capConfig = capConfig.replace("com.sahtak.dierhafer", "com.sahtak.dierhafer.admin");
+            capConfig = capConfig.replace("صحتك دير حافر", "صحتك - إدارة النظام");
+            fs.writeFileSync("capacitor.config.ts", capConfig);
+
+            // 2. Update Android build.gradle (namespace & applicationId)
+            let gradle = fs.readFileSync("android/app/build.gradle", "utf8");
+            gradle = gradle.replace(/com\.sahtak\.dierhafer/g, "com.sahtak.dierhafer.admin");
+            fs.writeFileSync("android/app/build.gradle", gradle);
+
+            // 3. Update Android strings.xml (app name & package name)
+            let strings = fs.readFileSync("android/app/src/main/res/values/strings.xml", "utf8");
+            strings = strings.replace(/com\.sahtak\.dierhafer/g, "com.sahtak.dierhafer.admin");
+            strings = strings.replace(/صحتك دير حافر/g, "صحتك - إدارة النظام");
+            fs.writeFileSync("android/app/src/main/res/values/strings.xml", strings);
+
+            // 4. Create MainActivity.java in com/sahtak/dierhafer/admin/MainActivity.java
+            const adminDir = "android/app/src/main/java/com/sahtak/dierhafer/admin";
+            fs.mkdirSync(adminDir, { recursive: true });
+            const mainActivityContent = `package com.sahtak.dierhafer.admin;\n\nimport com.getcapacitor.BridgeActivity;\n\npublic class MainActivity extends BridgeActivity {}\n`;
+            fs.writeFileSync(path.join(adminDir, "MainActivity.java"), mainActivityContent);
+
+            // 5. Create colors.xml with distinct admin primary & notification color (Purple/Violet)
+            const resValuesDir = "android/app/src/main/res/values";
+            fs.mkdirSync(resValuesDir, { recursive: true });
+            const colorsXml = `<?xml version="1.0" encoding="utf-8"?>\\n<resources>\\n    <color name="colorPrimary">#7C3AED</color>\\n    <color name="colorPrimaryDark">#6D28D9</color>\\n    <color name="colorAccent">#7C3AED</color>\\n</resources>\\n`;
+            fs.writeFileSync(path.join(resValuesDir, "colors.xml"), colorsXml);
+          '
+
+      - name: Build Web Application (Admin Mode)
+        run: |
+          VITE_ADMIN_MODE=true npm run build
+
+      - name: Set up Java JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Generate Persistent Debug Keystore if Needed
+        run: |
+          if [ ! -f android/app/debug.keystore ]; then
+            keytool -genkey -v -keystore android/app/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
+            git config --global user.name "GitHub Actions Bot"
+            git config --global user.email "actions@github.com"
+            git add android/app/debug.keystore
+            git commit -m "chore: add persistent debug.keystore for seamless app updates" || true
+            git push || true
+          fi
+
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses 2>/dev/null || true
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Make Gradlew Executable
+        run: chmod +x android/gradlew
+
+      - name: Build Admin Android APK with Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Prepare Admin APK Output
+        run: |
+          mkdir -p admin-apk-output
+          cp android/app/build/outputs/apk/debug/app-debug.apk admin-apk-output/Sahtak-Admin.apk
+
+      - name: Upload Admin APK as GitHub Run Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sahtak-Admin-APK
+          path: admin-apk-output/Sahtak-Admin.apk
+          retention-days: 30
+
+      - name: Publish Admin APK to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v1.0-admin-apk
+          name: "🛡️ تطبيق لوحة إدارة صحتك (Sahtak Admin APK)"
+          make_latest: true
+          body: |
+            ### 🛡️ تطبيق لوحة الإدارة والتحكم - صحتك دير حافر (Package: com.sahtak.dierhafer.admin)
+            
+            ✅ هذه هي **نسخة APK المنفصلة الخاصة بالمدير / الإدارة** (مُحدثة بدون أخطاء تشغيل MainActivity).
+            - مثبتة بحزمة مستقلة تماماً (`com.sahtak.dierhafer.admin`) واسم **"صحتك - إدارة النظام"** لتستطيع تثبيتها بجانب تطبيق المستخدمين العاديين بدون أي تعارض.
+            - مخصصة للتحكم الكامل، تعديل أوقات المناوبات، إدارة الصيدليات والمشافي، وإطلاق التحديثات الفورية.
+          files: admin-apk-output/Sahtak-Admin.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
