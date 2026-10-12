@@ -279,7 +279,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAdminLogin }) =>
 
               {/* GitHub Release & Source Download Button v1.1 */}
               <a
-                href="https://github.com/laithelbuneyye/sahtak-dierhafer/releases/tag/v1.1"
+                href="https://github.com/Baraa-cmd/sahtak-app/releases"
                 target="_blank"
                 rel="noreferrer"
                 className="w-full py-2.5 px-4 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-200 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"

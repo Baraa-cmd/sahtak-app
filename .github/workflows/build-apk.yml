@@ -79,13 +79,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: v1.0-apk
-          name: "📱 تطبيق صحتك دير حافر (Sahtak Dierhafer APK)"
+          tag_name: v1.1
+          name: "📱 تطبيق صحتك دير حافر الإصدار المنقح v1.1 (Sahtak Dierhafer APK)"
           make_latest: true
           body: |
-            ### 🩺 تطبيق صحتك - دير حافر للأندرويد (Package: com.sahtak.dierhafer)
+            ### 🩺 تطبيق صحتك - دير حافر للأندرويد الإصدار المنقح v1.1 (Package: com.sahtak.dierhafer)
             
-            ✅ تم بناء هذا الملف تلقائياً بعد كل تحديث على GitHub.
+            ✅ تم بناء هذا الملف تلقائياً بدعم الأمان التام والمزامنة السحابية الحية.
             - قم بتحميل ملف **`Sahtak-Dierhafer.apk`** المرفق وتثبيته مباشرة على هاتفك.
             - التطبيق أصلي بالكامل، يتصل بقاعدة البيانات الحية، ولا يظهر أي إشعارات متصفح خارجية.
           files: apk-output/Sahtak-Dierhafer.apk
