@@ -7,7 +7,6 @@ import {
   WifiOff,
   UserCheck,
   Lock,
-  Smartphone,
   Sparkles,
   Pill,
   Stethoscope,
@@ -26,7 +25,6 @@ interface HeaderProps {
   notificationsEnabled: boolean;
   onRequestNotifications: () => void;
   onOpenProviderLogin: () => void;
-  onOpenInstallApp?: () => void;
   onOpenAdminLogin?: () => void;
   session: AuthSession | null;
   activeTab?: ActiveTab;
@@ -44,7 +42,6 @@ export const Header: React.FC<HeaderProps> = ({
   notificationsEnabled,
   onRequestNotifications,
   onOpenProviderLogin,
-  onOpenInstallApp,
   onOpenAdminLogin,
   session,
   activeTab,
@@ -183,19 +180,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5">
-          {/* Install / Download App Button */}
-          {onOpenInstallApp && (
-            <button
-              onClick={onOpenInstallApp}
-              title="تثبيت التطبيق على هاتفك (أندرويد / آيفون)"
-              className="px-2.5 py-1.5 rounded-xl font-bold text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span className="hidden sm:inline">تثبيت التطبيق</span>
-              <span className="sm:hidden">تثبيت</span>
-            </button>
-          )}
-
           {/* Staff/Admin Login Button or User Badge */}
           <button
             onClick={onOpenProviderLogin}
