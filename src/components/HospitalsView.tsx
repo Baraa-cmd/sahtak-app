@@ -81,7 +81,7 @@ export const HospitalsView: React.FC<HospitalsViewProps> = ({
   }, [hospitals, searchQuery]);
 
   return (
-    <div className="pb-24 px-3 sm:px-4 pt-3 max-w-xl md:max-w-2xl mx-auto space-y-3.5">
+    <div className="pb-24 md:pb-12 px-3 sm:px-4 lg:px-6 pt-3 max-w-6xl mx-auto space-y-3.5">
       {/* Clean Hospitals Header */}
       <div className="pt-1 flex items-center justify-between">
         <div>
@@ -113,8 +113,13 @@ export const HospitalsView: React.FC<HospitalsViewProps> = ({
       </div>
 
       {/* Hospitals List */}
-      <div className="space-y-3">
-        {filteredHospitals.map((hospital) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredHospitals.length === 0 ? (
+          <div className="col-span-full bg-white rounded-3xl p-7 text-center border border-slate-200 shadow-2xs space-y-2">
+            <p className="text-xs font-bold text-slate-700">لم يتم العثور على نتائج مطابقة للبحث</p>
+          </div>
+        ) : (
+          filteredHospitals.map((hospital) => {
           const distanceFmt = formatDistanceMetersOrKm(hospital.distanceKm);
           const isFav = favorites.includes(hospital.id);
 
@@ -284,7 +289,8 @@ export const HospitalsView: React.FC<HospitalsViewProps> = ({
               </div>
             </div>
           );
-        })}
+        })
+      )}
       </div>
     </div>
   );

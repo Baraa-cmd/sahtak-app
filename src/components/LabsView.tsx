@@ -100,7 +100,7 @@ ${l.emergencyOnCall ? '🚨 *طوارئ:* متاح بالاتصال عند ال�
   }, [labs, searchQuery, filterTab, favorites]);
 
   return (
-    <div className="pb-24 px-3 sm:px-4 pt-3 max-w-xl md:max-w-2xl mx-auto space-y-3.5">
+    <div className="pb-24 md:pb-12 px-3 sm:px-4 lg:px-6 pt-3 max-w-6xl mx-auto space-y-3.5">
       {/* Header Card */}
       <div className="bg-gradient-to-br from-teal-800 via-teal-900 to-emerald-950 text-white rounded-3xl p-4 shadow-sm space-y-2.5">
         <div className="flex items-center justify-between">
@@ -197,9 +197,9 @@ ${l.emergencyOnCall ? '🚨 *طوارئ:* متاح بالاتصال عند ال�
       </div>
 
       {/* Labs List */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {filteredLabs.length === 0 ? (
-          <div className="bg-white rounded-3xl p-7 text-center border border-slate-200 shadow-2xs space-y-2">
+          <div className="col-span-full bg-white rounded-3xl p-7 text-center border border-slate-200 shadow-2xs space-y-2">
             <AlertCircle className="w-8 h-8 text-slate-300 mx-auto" />
             <p className="text-xs font-bold text-slate-700">
               {filterTab === 'favorites'

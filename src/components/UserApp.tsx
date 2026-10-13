@@ -57,6 +57,13 @@ interface UserAppProps {
 export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogin, isAdmin }) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('pharmacies');
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+  const [showInstallBanner, setShowInstallBanner] = useState(() => {
+    const isStandalone = typeof window !== 'undefined' && (
+      window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true
+    );
+    if (isStandalone) return false;
+    return localStorage.getItem('sehatuk_hide_install_banner') !== 'true';
+  });
 
   // Live Data States with offline fallback
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>(() => offlineStorage.getPharmacies() || []);
@@ -295,7 +302,43 @@ export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogi
         onOpenInstallApp={() => setIsInstallModalOpen(true)}
         onOpenAdminLogin={onOpenAdminLogin}
         session={session}
+        activeTab={activeTab}
+        onChangeTab={(t) => setActiveTab(t)}
+        onDutyPharmaciesCount={onDutyPharmaciesCount}
+        onDutyNursesCount={onDutyNursesCount}
       />
+ 
+      {/* Smart Mobile Install Banner (iPhone & Android) */}
+      {showInstallBanner && (
+        <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white px-3 sm:px-4 py-2 border-b border-emerald-700/40 text-xs shadow-xs">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 truncate">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="font-bold truncate text-[11px] sm:text-xs">
+                📱 لتجربة أسرع: ثبّت «صحتك» على شاشة هاتفك (آيفون وأندرويد) للعمل أوفلاين كأي تطبيق رسمي!
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsInstallModalOpen(true)}
+                className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black px-2.5 py-1 rounded-xl text-[11px] transition shadow-xs cursor-pointer"
+              >
+                تثبيت الآن 📲
+              </button>
+              <button
+                onClick={() => {
+                  setShowInstallBanner(false);
+                  localStorage.setItem('sehatuk_hide_install_banner', 'true');
+                }}
+                className="text-slate-400 hover:text-white text-base font-bold px-1.5 cursor-pointer leading-none"
+                title="إغلاق"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main View Area */}
       <main className="flex-1">
