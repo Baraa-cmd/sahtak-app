@@ -8,7 +8,7 @@ interface RatingModalProps {
   target: {
     id: string;
     name: string;
-    type: 'pharmacy' | 'nurse' | 'hospital' | 'lab';
+    type: 'pharmacy' | 'nurse' | 'hospital' | 'lab' | 'doctor';
     currentRating?: number;
   } | null;
   onSubmitRating: (review: RatingReview) => void;

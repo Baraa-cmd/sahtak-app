@@ -110,7 +110,7 @@ export interface BloodDonationRequest {
 export interface RatingReview {
   id: string;
   targetId: string;
-  targetType: 'pharmacy' | 'nurse' | 'hospital' | 'lab';
+  targetType: 'pharmacy' | 'nurse' | 'hospital' | 'lab' | 'doctor';
   rating: number; // 1 to 5
   comment?: string;
   tag?: string; // "معاملة ممتازة" | "استجابة سريعة ليلاً" | "متوفر كافة الأدوية"
@@ -147,7 +147,24 @@ export interface UserLocation {
   source?: LocationSource;
 }
 
-export type ActiveTab = 'pharmacies' | 'nurses' | 'labs' | 'hospitals' | 'map';
+export interface Doctor {
+  id: string;
+  name: string;
+  specialty: string; // "أطباء الأطفال", "أمراض الباطنية والعصبية", "النسائية والتوليد", "الجراحة العامة"
+  clinicAddress: string;
+  district: string;
+  latitude: number;
+  longitude: number;
+  workingHours: string;
+  phone: string;
+  consultationFee?: string;
+  isAvailableToday: boolean;
+  rating?: number;
+  ratingsCount?: number;
+  distanceKm?: number;
+}
+
+export type ActiveTab = 'pharmacies' | 'nurses' | 'labs' | 'hospitals' | 'doctors' | 'map';
 
 export type MapStyleMode = 'default' | 'satellite';
 
@@ -160,7 +177,7 @@ export interface MapLayerState {
 
 export interface SelectedRouteTarget {
   id: string;
-  type: 'pharmacy' | 'nurse' | 'hospital' | 'lab';
+  type: 'pharmacy' | 'nurse' | 'hospital' | 'lab' | 'doctor';
   name: string;
   latitude: number;
   longitude: number;

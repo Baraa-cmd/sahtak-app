@@ -42,6 +42,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       icon: Building2
     },
     {
+      id: 'doctors' as ActiveTab,
+      label: 'الأطباء',
+      icon: Stethoscope
+    },
+    {
       id: 'map' as ActiveTab,
       label: 'الخريطة',
       icon: Map

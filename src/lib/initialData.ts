@@ -1,4 +1,4 @@
-import { Pharmacy, Nurse, Hospital, MedicalLab, BloodDonationRequest, DutyScheduleConfig } from '../types';
+import { Pharmacy, Nurse, Hospital, MedicalLab, BloodDonationRequest, DutyScheduleConfig, Doctor } from '../types';
 
 // Default center coordinates for Dayr Hafir (دير حافر)
 export const DAYR_HAFIR_DEFAULT = {
@@ -243,6 +243,69 @@ export const INITIAL_PHARMACIES: Pharmacy[] = [
     rating: 4.5,
     ratingsCount: 8,
     isVerified: true
+  }
+];
+
+export const INITIAL_DOCTORS: Doctor[] = [
+  {
+    id: 'doc-1',
+    name: 'الدكتور محمد العلي',
+    specialty: 'أطباء الأطفال وحديثي الولادة',
+    clinicAddress: 'الشارع العام - فوق صيدلية دير حافر المركزية',
+    district: 'الشارع العام',
+    latitude: 36.1582,
+    longitude: 37.7062,
+    workingHours: 'السبت إلى الخميس: 10:00 صباحاً - 2:00 ظهراً',
+    phone: '0944987654',
+    consultationFee: '15,000 ل.س',
+    isAvailableToday: true,
+    rating: 4.9,
+    ratingsCount: 34
+  },
+  {
+    id: 'doc-2',
+    name: 'الدكتورة فاطمة المحمود',
+    specialty: 'النسائية والتوليد وجراحة العقم',
+    clinicAddress: 'دوار السوق المركزي - جانب مخبر الشفاء',
+    district: 'دوار السوق',
+    latitude: 36.1601,
+    longitude: 37.7085,
+    workingHours: 'يومياً ما عدا الجمعة: 9:00 صباحاً - 3:00 عصراً',
+    phone: '0955123789',
+    consultationFee: '20,000 ل.س',
+    isAvailableToday: true,
+    rating: 4.8,
+    ratingsCount: 42
+  },
+  {
+    id: 'doc-3',
+    name: 'الدكتور أحمد السليمان',
+    specialty: 'أمراض الباطنية والقلبية والسكري',
+    clinicAddress: 'شارع المستوصف - قرب المركز الصحي',
+    district: 'شارع المستوصف',
+    latitude: 36.1565,
+    longitude: 37.7088,
+    workingHours: 'السبت، الإثنين، الأربعاء: 11:00 صباحاً - 5:00 عصراً',
+    phone: '0933456123',
+    consultationFee: '18,000 ل.س',
+    isAvailableToday: false,
+    rating: 4.7,
+    ratingsCount: 25
+  },
+  {
+    id: 'doc-4',
+    name: 'الدكتور خالد العمر',
+    specialty: 'الجراحة العامة وجراحة العظام',
+    clinicAddress: 'طريق حلب - الرقة الدولي - بناء العيادات التخصصية',
+    district: 'طريق حلب - الرقة',
+    latitude: 36.1554,
+    longitude: 37.7031,
+    workingHours: 'يومياً: 4:00 عصراً - 8:00 مساءً',
+    phone: '0988789456',
+    consultationFee: '20,000 ل.س',
+    isAvailableToday: true,
+    rating: 4.9,
+    ratingsCount: 31
   }
 ];
 

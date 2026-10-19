@@ -12,7 +12,8 @@ import {
   RatingReview,
   CommunityReport,
   AppUpdateInfo,
-  DutyScheduleConfig
+  DutyScheduleConfig,
+  Doctor
 } from '../types';
 import {
   subscribeToPharmacies,
@@ -32,7 +33,8 @@ import {
   DEFAULT_DUTY_SCHEDULE,
   getDutyShiftInfo,
   getPharmacyLiveStatus,
-  INITIAL_PHARMACIES
+  INITIAL_PHARMACIES,
+  INITIAL_DOCTORS
 } from '../lib/initialData';
 import { offlineStorage, CURRENT_APP_VERSION } from '../lib/offlineStorage';
 import { Header } from './Header';
@@ -41,6 +43,7 @@ import { PharmaciesView } from './PharmaciesView';
 import { NursesView } from './NursesView';
 import { HospitalsView } from './HospitalsView';
 import { LabsView } from './LabsView';
+import { DoctorsView } from './DoctorsView';
 import { MapView } from './MapView';
 import { LocationModal } from './LocationModal';
 import { RatingModal } from './RatingModal';
@@ -95,7 +98,7 @@ export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogi
   const [ratingTarget, setRatingTarget] = useState<{
     id: string;
     name: string;
-    type: 'pharmacy' | 'nurse' | 'hospital' | 'lab';
+    type: 'pharmacy' | 'nurse' | 'hospital' | 'lab' | 'doctor';
     currentRating?: number;
   } | null>(null);
   const [reportTarget, setReportTarget] = useState<{
@@ -179,6 +182,19 @@ export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogi
       )
     }));
   }, [hospitals, userLocation]);
+
+  const [doctors] = useState<Doctor[]>(() => INITIAL_DOCTORS);
+  const doctorsWithDistance = React.useMemo(() => {
+    return doctors.map((d) => ({
+      ...d,
+      distanceKm: calculateDistanceKm(
+        userLocation.latitude,
+        userLocation.longitude,
+        d.latitude,
+        d.longitude
+      )
+    }));
+  }, [doctors, userLocation]);
 
   // Current duty shift info to calculate accurate on-duty counts
   const currentShiftInfo = React.useMemo(() => {
@@ -338,6 +354,14 @@ export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogi
             hospitals={hospitalsWithDistance}
             onSelectOnMap={handleSelectOnMap}
             onOpenCommunityReport={(t) => setReportTarget(t)}
+            onOpenRatingModal={(t) => setRatingTarget(t)}
+          />
+        )}
+
+        {activeTab === 'doctors' && (
+          <DoctorsView
+            doctors={doctorsWithDistance}
+            onSelectOnMap={handleSelectOnMap}
             onOpenRatingModal={(t) => setRatingTarget(t)}
           />
         )}
