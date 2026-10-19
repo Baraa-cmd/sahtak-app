@@ -93,31 +93,25 @@ export const DoctorsView: React.FC<DoctorsViewProps> = ({
           <Search className="w-4 h-4 text-teal-300 absolute right-3.5 top-3" />
         </div>
 
-        {/* Specialties Filter Pills */}
-        <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
-          <button
-            onClick={() => setSelectedSpecialty('all')}
-            className={`px-3 py-1.5 rounded-xl font-black transition cursor-pointer ${
-              selectedSpecialty === 'all'
-                ? 'bg-white text-teal-950 shadow-xs'
-                : 'bg-teal-950/50 text-teal-100 hover:bg-teal-900 border border-teal-700/40'
-            }`}
+        {/* Specialties Select Dropdown */}
+        <div className="relative pt-1">
+          <select
+            value={selectedSpecialty}
+            onChange={(e) => setSelectedSpecialty(e.target.value)}
+            className="w-full bg-teal-950/70 border border-teal-700/70 rounded-2xl px-4 py-2.5 text-xs font-black text-white focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer appearance-none"
           >
-            جميع الاختصاصات ({doctors.length})
-          </button>
-          {specialties.map((spec) => (
-            <button
-              key={spec}
-              onClick={() => setSelectedSpecialty(spec)}
-              className={`px-3 py-1.5 rounded-xl font-black transition cursor-pointer ${
-                selectedSpecialty === spec
-                  ? 'bg-white text-teal-950 shadow-xs'
-                  : 'bg-teal-950/50 text-teal-100 hover:bg-teal-900 border border-teal-700/40'
-              }`}
-            >
-              {spec}
-            </button>
-          ))}
+            <option value="all" className="bg-teal-900 text-white font-bold">
+              جميع الاختصاصات الطبية ({doctors.length})
+            </option>
+            {specialties.map((spec) => (
+              <option key={spec} value={spec} className="bg-teal-900 text-white font-bold">
+                {spec}
+              </option>
+            ))}
+          </select>
+          <div className="absolute left-3.5 top-3.5 pointer-events-none text-teal-300 text-xs font-bold">
+            ▼
+          </div>
         </div>
       </div>
 
