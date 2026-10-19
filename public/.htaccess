@@ -1,0 +1,86 @@
+# ==============================================================================
+# Spaceship / LiteSpeed / Apache Configuration for Sehatuk Platform
+# ==============================================================================
+
+# Ensure index.html is the primary directory index
+DirectoryIndex index.html index.htm index.php
+
+# Prevent directory indexing
+Options -Indexes
+
+# Correct MIME Types
+<IfModule mod_mime.c>
+  AddType application/vnd.android.package-archive .apk
+  AddType application/zip .zip
+  AddType text/html .html
+  AddType text/css .css
+  AddType application/javascript .js
+  AddType application/json .json
+  AddType image/svg+xml .svg
+  AddType font/woff2 .woff2
+</IfModule>
+
+# Enable Rewrite Engine for SPA client-side routing
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Ensure HTTPS (Auto SSL on Spaceship)
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} !^localhost
+  RewriteCond %{HTTP_HOST} !^127\.0\.0\.1
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Redirect legacy/cached cpanel default page back to root
+  RewriteRule ^cgi-sys(/.*)?$ / [R=301,L]
+
+  # 1. When root domain is requested directly, serve index.html
+  RewriteRule ^$ index.html [L]
+
+  # 2. When index.html is directly requested, do not rewrite
+  RewriteRule ^index\.html$ - [L]
+
+  # 3. Don't rewrite existing physical files or .apk/.zip download URLs
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_URI} \.(apk|zip)$ [NC]
+  RewriteRule ^ - [L]
+
+  # 4. Route ALL other SPA routes directly to index.html
+  RewriteRule ^.*$ index.html [L]
+</IfModule>
+
+# Gzip / Deflate Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Headers & Download Attachments Configuration
+<IfModule mod_headers.c>
+  # Force proper APK MIME type and Attachment Download
+  <FilesMatch "\.apk$">
+    Header set Content-Type "application/vnd.android.package-archive"
+    Header set Content-Disposition "attachment"
+    Header set X-Content-Type-Options "nosniff"
+  </FilesMatch>
+
+  <FilesMatch "\.zip$">
+    Header set Content-Type "application/zip"
+    Header set Content-Disposition "attachment"
+  </FilesMatch>
+
+  # Cache Vite hashed assets for 1 year
+  <FilesMatch "\.(css|woff2|woff|ttf|svg|png|jpg|jpeg|webp)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  # Do NOT cache index.html or Service Worker files so users always receive fresh app updates
+  <FilesMatch "(index\.html|sw\.js|registerSW\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+
+  # Security Headers
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

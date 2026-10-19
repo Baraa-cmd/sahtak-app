@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#065f46" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="صحتك" />
+    <link rel="apple-touch-icon" href="./icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="icon" type="image/svg+xml" sizes="192x192" href="./icon.svg" />
+    <title>صحتك</title>
+    <meta name="description" content="منصة صحتك: تحديد أقرب الصيدليات والمناوبة، والممرضين والمشافي على خريطة تفاعلية مع التوجيه المباشر." />
+    <meta property="og:title" content="صحتك" />
+    <meta property="og:description" content="منصة صحتك: دليل الصيدليات والممرضين والمشافي مع خرائط تفاعلية ومؤقت المناوبة الذكي." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script>
+      // Prevent browser install banner from showing
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      window.addEventListener('error', function(e) {
+        if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+          if (!sessionStorage.getItem('sehatuk_sw_recovered')) {
+            sessionStorage.setItem('sehatuk_sw_recovered', 'true');
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var r of regs) { r.unregister(); }
+                window.location.reload();
+              });
+            } else {
+              window.location.reload();
+            }
+          }
+        }
+      }, true);
+    </script>
+    <script type="module" crossorigin src="./assets/index-BJ3SxVBg.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C4heZfYg.css">
+  <link rel="manifest" href="./manifest.webmanifest"></head>
+  <body class="bg-emerald-950 text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+    <div id="root">
+      <div style="position:fixed;inset:0;background:linear-gradient(to bottom, #047857, #022c22);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;font-family:'Cairo',sans-serif;z-index:9999;">
+        <div style="width:96px;height:96px;border-radius:24px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 25px -5px rgba(0,0,0,0.3);margin-bottom:16px;">
+          <svg viewBox="0 0 100 100" width="60" height="60">
+            <path d="M38 12 C38 10 40 8 42 8 L58 8 C60 8 62 10 62 12 L62 38 L88 38 C90 38 92 40 92 42 L92 58 C92 60 90 62 88 62 L62 62 L62 88 C62 90 60 92 58 92 L42 92 C40 92 38 90 38 88 L38 62 L12 62 C10 62 8 60 8 58 L8 42 C8 40 10 38 12 38 L38 38 Z" fill="#047857"/>
+            <path d="M 14 50 L 32 50 L 40 32 L 50 68 L 60 38 L 68 56 L 74 50 L 86 50" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 style="font-size:26px;font-weight:900;margin:0 0 6px 0;letter-spacing:-0.5px;">صحتك</h1>
+        <p style="font-size:12px;opacity:0.85;margin:0;font-weight:600;">جاري تحميل الدليل الطبي والمناوبات...</p>
+      </div>
+    </div>
+  </body>
+</html>
