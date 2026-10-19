@@ -249,7 +249,7 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
             }`}
           >
             <span>🌙</span>
-            <span>دوام اعتيادي + مناوبة الليلة</span>
+            <span>مناوبة</span>
           </button>
 
           <button
