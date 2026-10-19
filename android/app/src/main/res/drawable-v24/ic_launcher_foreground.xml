@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.65"
+        android:scaleY="0.65"
+        android:translateX="18.9"
+        android:translateY="18.9">
+        <!-- White Medical Cross -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M44,14 L64,14 C66.2,14 68,15.8 68,18 L68,44 L94,44 C96.2,44 98,45.8 98,48 L98,68 C98,70.2 96.2,72 94,72 L68,72 L68,98 C68,100.2 66.2,102 64,102 L44,102 C41.8,102 40,100.2 40,98 L40,72 L14,72 C11.8,72 10,70.2 10,68 L10,48 C10,45.8 11.8,44 14,44 L40,44 L40,18 C40,15.8 41.8,14 44,14 Z" />
+        
+        <!-- Emerald Pulse ECG Line Across Cross -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#047857"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M14,58 L38,58 L45,42 L53,74 L60,50 L67,64 L72,58 L94,58" />
+        
+        <!-- Pulse Point Dots -->
+        <path
+            android:fillColor="#10B981"
+            android:pathData="M45,42 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" />
+        <path
+            android:fillColor="#065F46"
+            android:pathData="M53,74 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" />
+        <path
+            android:fillColor="#10B981"
+            android:pathData="M60,50 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" />
+    </group>
+</vector>
