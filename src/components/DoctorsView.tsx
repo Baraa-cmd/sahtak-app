@@ -94,10 +94,10 @@ export const DoctorsView: React.FC<DoctorsViewProps> = ({
         </div>
 
         {/* Specialties Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 text-xs">
+        <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
           <button
             onClick={() => setSelectedSpecialty('all')}
-            className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl font-black transition cursor-pointer ${
               selectedSpecialty === 'all'
                 ? 'bg-white text-teal-950 shadow-xs'
                 : 'bg-teal-950/50 text-teal-100 hover:bg-teal-900 border border-teal-700/40'
@@ -109,7 +109,7 @@ export const DoctorsView: React.FC<DoctorsViewProps> = ({
             <button
               key={spec}
               onClick={() => setSelectedSpecialty(spec)}
-              className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl font-black transition cursor-pointer ${
                 selectedSpecialty === spec
                   ? 'bg-white text-teal-950 shadow-xs'
                   : 'bg-teal-950/50 text-teal-100 hover:bg-teal-900 border border-teal-700/40'
