@@ -169,27 +169,20 @@ export const DoctorsView: React.FC<DoctorsViewProps> = ({
             </div>
 
             {/* Actions Row */}
-            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
-              <div className="flex items-center gap-1">
-                {doc.phone && (
-                  <a
-                    href={`tel:${doc.phone}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 bg-teal-700 hover:bg-teal-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
-                  >
-                    <Phone className="w-3 h-3" />
-                    <span>اتصال</span>
-                  </a>
-                )}
-                <span className="inline-flex items-center gap-0.5 text-teal-800 bg-teal-50 hover:bg-teal-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-teal-200/60">
-                  <Compass className="w-3 h-3" />
-                  <span>الخريطة</span>
-                </span>
-              </div>
-
-              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200/50">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
-                <span>{doc.rating || 4.8}</span>
+            <div className="pt-1.5 border-t border-slate-100 flex items-center gap-1 text-xs">
+              {doc.phone && (
+                <a
+                  href={`tel:${doc.phone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 bg-teal-700 hover:bg-teal-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
+                >
+                  <Phone className="w-3 h-3" />
+                  <span>اتصال</span>
+                </a>
+              )}
+              <span className="inline-flex items-center gap-0.5 text-teal-800 bg-teal-50 hover:bg-teal-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-teal-200/60">
+                <Compass className="w-3 h-3" />
+                <span>الخريطة</span>
               </span>
             </div>
           </div>

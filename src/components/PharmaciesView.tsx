@@ -428,27 +428,20 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
                 </div>
 
                 {/* Bottom Row Actions */}
-                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
-                  <div className="flex items-center gap-1">
-                    {pharmacy.phone && (
-                      <a
-                        href={`tel:${pharmacy.phone}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
-                      >
-                        <Phone className="w-3 h-3" />
-                        <span>اتصال</span>
-                      </a>
-                    )}
-                    <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-emerald-200/60">
-                      <Compass className="w-3 h-3" />
-                      <span>الخريطة</span>
-                    </span>
-                  </div>
-
-                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200/50">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
-                    <span>{pharmacy.rating || 4.8}</span>
+                <div className="pt-1.5 border-t border-slate-100 flex items-center gap-1 text-xs">
+                  {pharmacy.phone && (
+                    <a
+                      href={`tel:${pharmacy.phone}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
+                    >
+                      <Phone className="w-3 h-3" />
+                      <span>اتصال</span>
+                    </a>
+                  )}
+                  <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-emerald-200/60">
+                    <Compass className="w-3 h-3" />
+                    <span>الخريطة</span>
                   </span>
                 </div>
               </div>
