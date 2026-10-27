@@ -5,18 +5,21 @@ export interface LocationDetectionResult {
   latitude: number;
   longitude: number;
   districtName: string;
-  source: 'gps' | 'ip' | 'default';
+  source: 'gps' | 'default';
   accuracy?: number;
 }
 
-// Reverse geocode coordinates to an Arabic street / neighborhood name
+/**
+ * Reverse geocode coordinates to an Arabic street / neighborhood name
+ * Uses OpenStreetMap Nominatim with language 'ar'
+ */
 export async function reverseGeocodeArabic(lat: number, lng: number): Promise<string> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3500);
 
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar&zoom=16`,
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar&zoom=17`,
       {
         headers: {
           'Accept': 'application/json'
@@ -51,118 +54,39 @@ export async function reverseGeocodeArabic(lat: number, lng: number): Promise<st
   return '';
 }
 
-// Automatic IP Geolocation (Zero-permission fallback)
-export async function detectLocationViaIP(): Promise<LocationDetectionResult | null> {
-  // Service 1: ipwho.is (fast, CORS friendly, no API key needed)
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch('https://ipwho.is/', { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.success && typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-        const cityName = data.city || data.region || data.country || '';
-        return {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          districtName: cityName ? `${cityName} (عبر مزود الإنترنت)` : 'موقعك التقريبي (IP)',
-          source: 'ip'
-        };
-      }
-    }
-  } catch {
-    // Try service 2
-  }
-
-  // Service 2: BigDataCloud client reverse geocode
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=ar', { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-        const cityName = data.city || data.locality || data.principalSubdivision || data.countryName || '';
-        return {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          districtName: cityName ? `${cityName} (عبر مزود الإنترنت)` : 'موقعك التقريبي (IP)',
-          source: 'ip'
-        };
-      }
-    }
-  } catch {
-    // Try service 3
-  }
-
-  // Service 3: FreeIPAPI
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch('https://freeipapi.com/api/json', { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-        const cityName = data.cityName || data.regionName || data.countryName || '';
-        return {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          districtName: cityName ? `${cityName} (عبر مزود الإنترنت)` : 'موقعك التقريبي (IP)',
-          source: 'ip'
-        };
-      }
-    }
-  } catch {
-    // All IP services exhausted
-  }
-
-  return null;
-}
-
-// Request Browser Geolocation (GPS / Wi-Fi) with promise
-export function getBrowserGeolocation(highAccuracy = true, timeout = 10000): Promise<GeolocationPosition> {
+/**
+ * Request Browser Geolocation (Strict Physical GPS Hardware)
+ * Uses enableHighAccuracy: true and maximumAge: 0 to force fresh satellite/hardware GPS sampling.
+ */
+export function getBrowserGeolocation(timeout = 10000): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      return reject(new Error('Geolocation not supported'));
+      return reject(new Error('Geolocation hardware not supported by browser'));
     }
     navigator.geolocation.getCurrentPosition(
       resolve,
       reject,
       {
-        enableHighAccuracy: highAccuracy,
+        enableHighAccuracy: true, // Forces physical GPS hardware
         timeout,
-        maximumAge: 0 // Force fresh, real-time GPS coordinate sample
+        maximumAge: 0 // Forces fresh real-time sample, never cached
       }
     );
   });
 }
 
 /**
- * Main Automatic High-Precision Detection Pipeline:
- * Always attempts to get the user's real high-precision location.
- * 1. Triggers high-accuracy GPS with maximumAge: 0.
- * 2. Reads pos.coords.accuracy for exact margin error in meters.
- * 3. Reverse geocodes coordinates to Arabic neighborhood / street name.
- * 4. Falls back gracefully to IP location if GPS permission is disabled.
+ * Strict Physical GPS Detection Pipeline:
+ * - Detects strictly via hardware GPS (navigator.geolocation).
+ * - Ignores IP / ISP / VPN provider geolocation completely to prevent any VPN skew/errors.
+ * - Reverse geocodes exact GPS coordinates to Arabic neighborhood / street name.
+ * - Falls back safely to Dayr Hafir central default if GPS is disabled on the phone/device.
  */
 export async function detectRealLocationAutomatically(
   onUpdate?: (loc: UserLocation) => void
 ): Promise<UserLocation> {
-  let hasResolvedGPS = false;
-
-  // Background promise for IP detection
-  const ipPromise = detectLocationViaIP().catch(() => null);
-
-  // Try High Precision GPS
   try {
-    const pos = await getBrowserGeolocation(true, 8000);
-    hasResolvedGPS = true;
+    const pos = await getBrowserGeolocation(10000);
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
     const accuracy = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : null;
@@ -170,57 +94,22 @@ export async function detectRealLocationAutomatically(
     // Get Arabic neighborhood or street name
     const friendlyName = await reverseGeocodeArabic(lat, lng);
     const accuracyTag = accuracy && accuracy < 100 ? ` (±${accuracy}م)` : '';
-    
+
     const result: UserLocation = {
       latitude: lat,
       longitude: lng,
-      districtName: friendlyName ? `${friendlyName}${accuracyTag}` : `موقعك الفعلي الدقيق (GPS${accuracyTag})`,
+      districtName: friendlyName ? `${friendlyName}${accuracyTag}` : `موقعك الفعلي (GPS${accuracyTag})`,
       isAuto: true,
       source: 'gps'
     };
+
     if (onUpdate) onUpdate(result);
     return result;
-  } catch {
-    // High accuracy failed or timed out, try standard network GPS
-    try {
-      const pos = await getBrowserGeolocation(false, 4000);
-      hasResolvedGPS = true;
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      const friendlyName = await reverseGeocodeArabic(lat, lng);
-      const result: UserLocation = {
-        latitude: lat,
-        longitude: lng,
-        districtName: friendlyName || 'موقعك الفعلي (شبكة الهاتف)',
-        isAuto: true,
-        source: 'gps'
-      };
-      if (onUpdate) onUpdate(result);
-      return result;
-    } catch {
-      // Both GPS attempts failed/denied
-    }
+  } catch (err) {
+    console.warn('Physical GPS detection unavailable or permission denied:', err);
   }
 
-  // If GPS didn't resolve, use IP result
-  if (!hasResolvedGPS) {
-    const ipRes = await ipPromise;
-    if (ipRes) {
-      // Try reverse geocode for a better Arabic district name
-      const friendlyName = await reverseGeocodeArabic(ipRes.latitude, ipRes.longitude);
-      const result: UserLocation = {
-        latitude: ipRes.latitude,
-        longitude: ipRes.longitude,
-        districtName: friendlyName || ipRes.districtName,
-        isAuto: true,
-        source: 'ip'
-      };
-      if (onUpdate) onUpdate(result);
-      return result;
-    }
-  }
-
-  // Ultimate fallback if no internet or all fail: Default Dayr Hafir
+  // Safe fallback if GPS hardware is turned off or denied by user: Default Dayr Hafir location
   const fallback: UserLocation = {
     latitude: DAYR_HAFIR_DEFAULT.latitude,
     longitude: DAYR_HAFIR_DEFAULT.longitude,
@@ -228,6 +117,7 @@ export async function detectRealLocationAutomatically(
     isAuto: false,
     source: 'default'
   };
+
   if (onUpdate) onUpdate(fallback);
   return fallback;
 }
