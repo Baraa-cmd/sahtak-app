@@ -429,16 +429,6 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
 
                 {/* Bottom Row Actions */}
                 <div className="pt-1.5 border-t border-slate-100 flex items-center gap-1 text-xs">
-                  {pharmacy.phone && (
-                    <a
-                      href={`tel:${pharmacy.phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
-                    >
-                      <Phone className="w-3 h-3" />
-                      <span>اتصال</span>
-                    </a>
-                  )}
                   <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-emerald-200/60">
                     <Compass className="w-3 h-3" />
                     <span>الخريطة</span>

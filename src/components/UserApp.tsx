@@ -37,6 +37,7 @@ import {
   INITIAL_DOCTORS
 } from '../lib/initialData';
 import { offlineStorage, CURRENT_APP_VERSION } from '../lib/offlineStorage';
+import { detectRealLocationAutomatically } from '../lib/locationDetector';
 import { Header } from './Header';
 import { BottomNav } from './BottomNav';
 import { PharmaciesView } from './PharmaciesView';
@@ -220,30 +221,17 @@ export const UserApp: React.FC<UserAppProps> = ({ onBackToAdmin, onOpenAdminLogi
   };
 
   // Location handlers
-  const handleDetectGps = () => {
+  const handleDetectGps = async () => {
     setIsLocating(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const loc: UserLocation = {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            districtName: 'موقعك الحالي عبر GPS',
-            isAuto: true,
-            source: 'gps'
-          };
-          setUserLocation(loc);
-          offlineStorage.saveUserLocation(loc);
-          setIsLocating(false);
-          setIsLocationModalOpen(false);
-        },
-        () => {
-          setIsLocating(false);
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    } else {
+    try {
+      const loc = await detectRealLocationAutomatically();
+      setUserLocation(loc);
+      offlineStorage.saveUserLocation(loc);
+    } catch (err) {
+      console.warn('GPS detection failed:', err);
+    } finally {
       setIsLocating(false);
+      setIsLocationModalOpen(false);
     }
   };
 

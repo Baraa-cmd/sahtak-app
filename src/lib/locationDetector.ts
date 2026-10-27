@@ -126,7 +126,7 @@ export async function detectLocationViaIP(): Promise<LocationDetectionResult | n
 }
 
 // Request Browser Geolocation (GPS / Wi-Fi) with promise
-export function getBrowserGeolocation(highAccuracy = true, timeout = 7000): Promise<GeolocationPosition> {
+export function getBrowserGeolocation(highAccuracy = true, timeout = 10000): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       return reject(new Error('Geolocation not supported'));
@@ -137,19 +137,19 @@ export function getBrowserGeolocation(highAccuracy = true, timeout = 7000): Prom
       {
         enableHighAccuracy: highAccuracy,
         timeout,
-        maximumAge: 10000
+        maximumAge: 0 // Force fresh, real-time GPS coordinate sample
       }
     );
   });
 }
 
 /**
- * Main Automatic Detection Pipeline:
- * Always attempts to get the user's real location with zero manual steps.
- * 1. Triggers GPS and IP simultaneously.
- * 2. If GPS responds quickly, uses GPS (highest accuracy).
- * 3. If GPS is slow or blocked, uses IP location immediately so the app is NOT stuck.
- * 4. Enhances the label with Arabic street/city name.
+ * Main Automatic High-Precision Detection Pipeline:
+ * Always attempts to get the user's real high-precision location.
+ * 1. Triggers high-accuracy GPS with maximumAge: 0.
+ * 2. Reads pos.coords.accuracy for exact margin error in meters.
+ * 3. Reverse geocodes coordinates to Arabic neighborhood / street name.
+ * 4. Falls back gracefully to IP location if GPS permission is disabled.
  */
 export async function detectRealLocationAutomatically(
   onUpdate?: (loc: UserLocation) => void
@@ -159,28 +159,31 @@ export async function detectRealLocationAutomatically(
   // Background promise for IP detection
   const ipPromise = detectLocationViaIP().catch(() => null);
 
-  // Try GPS with high accuracy
+  // Try High Precision GPS
   try {
-    const pos = await getBrowserGeolocation(true, 5000);
+    const pos = await getBrowserGeolocation(true, 8000);
     hasResolvedGPS = true;
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
+    const accuracy = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : null;
 
-    // Get Arabic neighborhood or city name
+    // Get Arabic neighborhood or street name
     const friendlyName = await reverseGeocodeArabic(lat, lng);
+    const accuracyTag = accuracy && accuracy < 100 ? ` (±${accuracy}م)` : '';
+    
     const result: UserLocation = {
       latitude: lat,
       longitude: lng,
-      districtName: friendlyName || 'موقعك الفعلي المباشر (GPS)',
+      districtName: friendlyName ? `${friendlyName}${accuracyTag}` : `موقعك الفعلي الدقيق (GPS${accuracyTag})`,
       isAuto: true,
       source: 'gps'
     };
     if (onUpdate) onUpdate(result);
     return result;
   } catch {
-    // High accuracy failed or timed out, try low accuracy network GPS quickly
+    // High accuracy failed or timed out, try standard network GPS
     try {
-      const pos = await getBrowserGeolocation(false, 3000);
+      const pos = await getBrowserGeolocation(false, 4000);
       hasResolvedGPS = true;
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
