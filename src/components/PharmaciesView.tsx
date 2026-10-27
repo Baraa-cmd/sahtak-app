@@ -5,6 +5,7 @@ import {
   Clock,
   Compass,
   AlertCircle,
+  AlertTriangle,
   Timer,
   ChevronLeft,
   ChevronDown,
@@ -410,11 +411,30 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
                 </div>
 
                 {/* Bottom Row Actions */}
-                <div className="pt-1.5 border-t border-slate-100 flex items-center gap-1 text-xs">
+                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
                   <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-emerald-200/60">
-                    <Compass className="w-3 h-3" />
+                    <Compass className="w-3 h-3 text-emerald-700" />
                     <span>الخريطة</span>
                   </span>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenCommunityReport({
+                        id: pharmacy.id,
+                        name: pharmacy.name,
+                        type: 'pharmacy',
+                        district: pharmacy.district,
+                        isOnDuty: pharmacy.isOnDuty
+                      });
+                    }}
+                    title="الإبلاغ عن أخطاء أو تحديث حالة الصيدلية"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2 py-1 rounded-lg border border-amber-200/70 transition cursor-pointer"
+                  >
+                    <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
+                    <span>بلاغ</span>
+                  </button>
                 </div>
               </div>
             );
