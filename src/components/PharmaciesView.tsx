@@ -182,98 +182,80 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
   return (
     <div className="pb-24 md:pb-12 px-3 sm:px-4 lg:px-6 pt-3 max-w-6xl mx-auto space-y-3.5">
       {/* Header Card */}
-      <div className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-3xl p-4 shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl p-3.5 shadow-xs space-y-2.5">
+        {/* Top Info */}
+        <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-xl font-black tracking-tight mb-1">صيدليات دير حافر</h2>
-            <p className="text-xs text-emerald-100 font-bold flex flex-wrap items-center gap-2.5 leading-normal">
-              <span className="bg-white/10 px-2 py-0.5 rounded-lg">دوام اعتيادي: 8:00 ص - 6:00 م</span>
-              <span className="bg-white/10 px-2 py-0.5 rounded-lg">المناوبة: 9:00 م - 12:00 لـيلاً</span>
+            <h2 className="text-base sm:text-lg font-black tracking-tight">صيدليات دير حافر</h2>
+            <p className="text-[11px] text-emerald-100 font-medium">
+              الاعتيادي: 8:00 ص - 6:00 م • المناوبة: 9:00 م - 12:00 ليلاً
             </p>
           </div>
 
           <button
-            onClick={() => setFilterTab('on_duty')}
-            className={`flex items-center gap-1.5 text-xs font-black px-3.5 py-2 rounded-2xl border transition active:scale-95 shadow-2xs cursor-pointer shrink-0 ${
-              activeNowCount > 0
-                ? 'bg-emerald-950/80 hover:bg-emerald-950 border-emerald-400/50 text-emerald-200'
-                : 'bg-amber-950/80 hover:bg-amber-950 border-amber-400/50 text-amber-200'
-            }`}
+            onClick={() => setFilterTab('night_duty')}
+            className="bg-emerald-950/70 border border-emerald-400/40 text-emerald-200 px-2.5 py-1 rounded-xl text-xs font-black shrink-0 cursor-pointer flex items-center gap-1"
           >
-            {activeNowCount > 0 ? (
-              <span className="flex items-center gap-1.5 whitespace-nowrap">
-                <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping shrink-0" />
-                <span>{activeNowCount} مناوبة 🟢</span>
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5 whitespace-nowrap">
-                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                <span>{scheduledCount} مناوبة 🌙</span>
-              </span>
-            )}
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{scheduledCount} مناوبة 🌙</span>
           </button>
         </div>
 
-        {/* Ready-made Filter Buttons */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 text-xs">
+        {/* Filter Pills - Clean & Concise */}
+        <div className="flex items-center gap-1 flex-wrap pt-0.5 text-xs">
           <button
             onClick={() => setFilterTab('all')}
-            className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               filterTab === 'all'
                 ? 'bg-white text-emerald-950 shadow-xs'
-                : 'bg-emerald-950/50 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/40'
+                : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/30'
             }`}
           >
-            <span>📋</span>
-            <span>الكل ({pharmacies.length})</span>
+            الكل ({pharmacies.length})
           </button>
 
           <button
             onClick={() => setFilterTab('regular_duty')}
-            className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               filterTab === 'regular_duty'
                 ? 'bg-white text-emerald-950 shadow-xs'
-                : 'bg-emerald-950/50 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/40'
+                : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/30'
             }`}
           >
-            <span>🟢</span>
-            <span>دوام اعتيادي</span>
+            دوام اعتيادي
           </button>
 
           <button
             onClick={() => setFilterTab('night_duty')}
-            className={`px-3.5 py-1.5 rounded-xl font-black transition shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               filterTab === 'night_duty'
-                ? 'bg-white text-emerald-950 shadow-xs ring-2 ring-emerald-300/60'
-                : 'bg-emerald-950/50 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/40'
+                ? 'bg-white text-emerald-950 shadow-xs ring-2 ring-emerald-300/50'
+                : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/30'
             }`}
           >
-            <span>🌙</span>
-            <span>مناوبة</span>
+            مناوبة 🌙
           </button>
 
           <button
             onClick={() => setFilterTab('nearest')}
-            className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               filterTab === 'nearest'
                 ? 'bg-white text-emerald-950 shadow-xs'
-                : 'bg-emerald-950/50 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/40'
+                : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/30'
             }`}
           >
-            <span>📍</span>
-            <span>الأقرب</span>
+            الأقرب 📍
           </button>
 
           <button
             onClick={() => setFilterTab('favorites')}
-            className={`px-3 py-1.5 rounded-xl font-black transition shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               filterTab === 'favorites'
                 ? 'bg-white text-emerald-950 shadow-xs'
-                : 'bg-emerald-950/50 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/40'
+                : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-900 border border-emerald-700/30'
             }`}
           >
-            <span>⭐</span>
-            <span>المفضلة ({favorites.length})</span>
+            المفضلة ({favorites.length})
           </button>
         </div>
       </div>
