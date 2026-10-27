@@ -430,10 +430,9 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
                       });
                     }}
                     title="الإبلاغ عن أخطاء أو تحديث حالة الصيدلية"
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2 py-1 rounded-lg border border-amber-200/70 transition cursor-pointer"
+                    className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/70 transition cursor-pointer active:scale-95 flex items-center justify-center shrink-0"
                   >
-                    <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
-                    <span>بلاغ</span>
+                    <MessageSquarePlus className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                   </button>
                 </div>
               </div>
