@@ -120,176 +120,89 @@ export const HospitalsView: React.FC<HospitalsViewProps> = ({
           </div>
         ) : (
           filteredHospitals.map((hospital) => {
-          const distanceFmt = formatDistanceMetersOrKm(hospital.distanceKm);
-          const isFav = favorites.includes(hospital.id);
+            const distanceFmt = formatDistanceMetersOrKm(hospital.distanceKm);
+            const isFav = favorites.includes(hospital.id);
 
-          return (
-            <div
-              key={hospital.id}
-              onClick={() =>
-                onSelectOnMap({
-                  id: hospital.id,
-                  type: 'hospital',
-                  name: hospital.name,
-                  latitude: hospital.latitude,
-                  longitude: hospital.longitude,
-                  distanceKm: hospital.distanceKm,
-                  district: hospital.district
-                })
-              }
-              className="bg-white rounded-3xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all space-y-2.5 cursor-pointer relative"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="space-y-1 flex-1">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="font-black text-sm text-slate-900 leading-tight">
+            return (
+              <div
+                key={hospital.id}
+                onClick={() =>
+                  onSelectOnMap({
+                    id: hospital.id,
+                    type: 'hospital',
+                    name: hospital.name,
+                    latitude: hospital.latitude,
+                    longitude: hospital.longitude,
+                    distanceKm: hospital.distanceKm,
+                    district: hospital.district
+                  })
+                }
+                className="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-2xs hover:border-rose-600 transition-all space-y-2 cursor-pointer relative flex flex-col justify-between"
+              >
+                {/* Header: Name, Distance & Favorite */}
+                <div className="space-y-1">
+                  <div className="flex items-start justify-between gap-1">
+                    <h3 className="font-black text-slate-900 text-xs sm:text-sm line-clamp-1 leading-snug">
                       {hospital.name}
                     </h3>
 
-                    {hospital.emergency24h && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-black bg-rose-50 text-rose-800 border border-rose-200 px-1.5 py-0.5 rounded-md">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
-                        <span>طوارئ 24 ساعة</span>
-                      </span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleFavorite(hospital.id, e)}
+                      title={isFav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
+                      className="p-1 rounded-lg text-slate-400 hover:text-amber-500 shrink-0 cursor-pointer"
+                    >
+                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-500' : ''}`} />
+                    </button>
+                  </div>
 
-                    {hospital.isVerified && (
-                      <span
-                        title="منشأة صحية موثقة ومعتمدة"
-                        className="inline-flex items-center gap-0.5 text-[10px] font-black bg-blue-50 text-blue-800 border border-blue-200 px-1.5 py-0.5 rounded-md"
+                  <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 line-clamp-1">
+                    <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span>{hospital.district} • {distanceFmt.full}</span>
+                  </p>
+                </div>
+
+                {/* Emergency Badge */}
+                <div className="flex items-center gap-1">
+                  {hospital.emergency24h ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded-md">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+                      <span>طوارئ 24 ساعة</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-md">
+                      <span>{hospital.type}</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Actions Row */}
+                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
+                  <div className="flex items-center gap-1">
+                    {hospital.emergencyPhone && (
+                      <a
+                        href={`tel:${hospital.emergencyPhone}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 bg-rose-700 hover:bg-rose-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
                       >
-                        <ShieldCheck className="w-3 h-3 text-blue-600" />
-                        <span>معتمد</span>
-                      </span>
+                        <PhoneCall className="w-3 h-3" />
+                        <span>طوارئ</span>
+                      </a>
                     )}
-                  </div>
-
-                  <p className="text-xs font-bold text-rose-800">
-                    {hospital.type}
-                  </p>
-
-                  <p className="text-xs text-slate-500 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>{hospital.district}</span>
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={(e) => handleShareHospital(hospital, e)}
-                    title="مشاركة بيانات المشفى عبر واتساب / وسائل التواصل (Feature 12)"
-                    className="p-1.5 rounded-xl transition text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 shadow-2xs active:scale-95"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => handleToggleFavorite(hospital.id, e)}
-                    title={isFav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
-                    className={`p-1.5 rounded-xl transition ${
-                      isFav
-                        ? 'text-amber-500 bg-amber-50 border border-amber-200'
-                        : 'text-slate-400 bg-slate-50 hover:bg-slate-100 border border-slate-100'
-                    }`}
-                  >
-                    <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400' : ''}`} />
-                  </button>
-
-                  <div className="text-left bg-slate-50 border border-slate-100 px-2 py-1 rounded-xl">
-                    <span className="text-xs font-black text-slate-800 block">
-                      {distanceFmt.full}
-                    </span>
-                    <span className="text-[9px] text-slate-400 font-semibold block">
-                      عنك
+                    <span className="inline-flex items-center gap-0.5 text-rose-900 bg-rose-50 hover:bg-rose-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-rose-200/60">
+                      <Compass className="w-3 h-3 text-rose-700" />
+                      <span>الخريطة</span>
                     </span>
                   </div>
-                </div>
-              </div>
 
-              {/* Services list */}
-              <div className="flex flex-wrap gap-1 pt-0.5">
-                {hospital.services.map((srv, idx) => (
-                  <span
-                    key={idx}
-                    className="text-[10px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg"
-                  >
-                    {srv}
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200/50">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
+                    <span>{hospital.rating || 4.7}</span>
                   </span>
-                ))}
+                </div>
               </div>
-
-              {/* Actions */}
-              <div className="pt-1 flex items-center gap-2 border-t border-slate-100">
-                <a
-                  href={`tel:${hospital.emergencyPhone}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex-1 bg-rose-700 hover:bg-rose-800 text-white py-2 px-3 rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-2xs active:scale-95"
-                >
-                  <PhoneCall className="w-3.5 h-3.5" />
-                  <span>اتصال للطوارئ</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectOnMap({
-                      id: hospital.id,
-                      type: 'hospital',
-                      name: hospital.name,
-                      latitude: hospital.latitude,
-                      longitude: hospital.longitude,
-                      distanceKm: hospital.distanceKm,
-                      district: hospital.district
-                    });
-                  }}
-                  className="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-2 px-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
-                >
-                  <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>مسار الخريطة</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenRatingModal?.({
-                      id: hospital.id,
-                      name: hospital.name,
-                      type: 'hospital',
-                      currentRating: hospital.rating
-                    });
-                  }}
-                  title="تقييم المشفى"
-                  className="p-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold transition border border-amber-200 flex items-center gap-1"
-                >
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                  <span>{hospital.rating || 4.6}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenCommunityReport({
-                      id: hospital.id,
-                      name: hospital.name,
-                      type: 'hospital',
-                      district: hospital.district,
-                      currentPhone: hospital.emergencyPhone
-                    });
-                  }}
-                  className="p-2 rounded-2xl bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-800 text-xs font-bold transition border border-slate-200"
-                  title="مشاركة تحديث أو ملاحظة حول هذا المركز"
-                >
-                  <MessageSquarePlus className="w-4 h-4 text-emerald-700" />
-                </button>
-              </div>
-            </div>
-          );
-        })
+            );
+          })
       )}
       </div>
     </div>

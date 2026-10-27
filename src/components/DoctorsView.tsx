@@ -131,101 +131,66 @@ export const DoctorsView: React.FC<DoctorsViewProps> = ({
                 distanceKm: doc.distanceKm
               })
             }
-            className="bg-white rounded-3xl p-4 shadow-sm hover:shadow-md border border-slate-200/80 transition-all cursor-pointer space-y-3 group"
+            className="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-2xs hover:border-teal-600 transition-all cursor-pointer space-y-2 flex flex-col justify-between"
           >
-            {/* Top Row: Name, Specialty & Availability */}
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-base font-black text-slate-900 group-hover:text-teal-800 transition-colors">
-                    {doc.name}
-                  </h3>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-black bg-teal-50 text-teal-800 px-2 py-0.5 rounded-full border border-teal-200">
-                    <ShieldCheck className="w-3 h-3 text-teal-600 shrink-0" />
-                    <span>{doc.specialty}</span>
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{doc.district} - {doc.clinicAddress}</span>
-                </p>
+            {/* Header: Name, Specialty & Location */}
+            <div className="space-y-1">
+              <div className="flex items-start justify-between gap-1">
+                <h3 className="font-black text-slate-900 text-xs sm:text-sm line-clamp-1 leading-snug">
+                  {doc.name}
+                </h3>
+                <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded-md border border-teal-200/60 shrink-0">
+                  {doc.specialty}
+                </span>
               </div>
 
-              <div className="flex flex-col items-end gap-1 shrink-0">
-                <span
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1 shadow-2xs ${
-                    doc.isAvailableToday
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                      : 'bg-slate-100 text-slate-600 border border-slate-200'
-                  }`}
-                >
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      doc.isAvailableToday ? 'bg-emerald-600 animate-pulse' : 'bg-slate-400'
-                    }`}
-                  />
-                  <span>{doc.isAvailableToday ? 'مستقبل اليوم' : 'غير متواجد اليوم'}</span>
-                </span>
-                {doc.distanceKm !== undefined && (
-                  <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">
-                    يبعد {doc.distanceKm.toFixed(1)} كم
-                  </span>
-                )}
-              </div>
+              <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 line-clamp-1">
+                <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                <span>{doc.district} • {doc.distanceKm !== undefined ? `${doc.distanceKm.toFixed(1)} كم` : 'دير حافر'}</span>
+              </p>
             </div>
 
-            {/* Working Hours & Fees */}
-            <div className="bg-slate-50 rounded-2xl p-2.5 border border-slate-200/60 text-xs space-y-1 font-semibold text-slate-700">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-500 text-[11px]">أوقات العيادة:</span>
-                <span className="text-slate-900 font-bold">{doc.workingHours}</span>
-              </div>
-              {doc.consultationFee && (
-                <div className="flex items-center justify-between border-t border-slate-200/60 pt-1">
-                  <span className="text-slate-500 text-[11px]">سعر الكشفية:</span>
-                  <span className="text-teal-700 font-black">{doc.consultationFee}</span>
-                </div>
-              )}
+            {/* Availability Badge */}
+            <div className="flex items-center gap-1">
+              <span
+                className={`px-2 py-0.5 rounded-md text-[10px] font-bold inline-flex items-center gap-1 ${
+                  doc.isAvailableToday
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    doc.isAvailableToday ? 'bg-emerald-600 animate-pulse' : 'bg-slate-400'
+                  }`}
+                />
+                <span>{doc.isAvailableToday ? 'متواجد اليوم' : 'غير متواجد'}</span>
+              </span>
             </div>
 
             {/* Actions Row */}
-            <div className="pt-1 flex items-center justify-between gap-2 border-t border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="text-teal-700 font-black flex items-center gap-1 bg-teal-50 px-2.5 py-1 rounded-xl border border-teal-200/80 text-xs">
-                  <Compass className="w-3.5 h-3.5 shrink-0" />
-                  <span>مسار الخريطة</span>
-                </span>
-
+            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
+              <div className="flex items-center gap-1">
                 {doc.phone && (
                   <a
                     href={`tel:${doc.phone}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 bg-teal-700 hover:bg-teal-800 text-white font-black text-xs px-2.5 py-1 rounded-xl shadow-2xs active:scale-95 transition cursor-pointer"
-                    title="اتصال هاتفي بالعيادة"
+                    className="inline-flex items-center gap-1 bg-teal-700 hover:bg-teal-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
                   >
-                    <Phone className="w-3 h-3 text-white shrink-0" />
+                    <Phone className="w-3 h-3" />
                     <span>اتصال</span>
                   </a>
                 )}
+                <span className="inline-flex items-center gap-0.5 text-teal-800 bg-teal-50 hover:bg-teal-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-teal-200/60">
+                  <Compass className="w-3 h-3" />
+                  <span>الخريطة</span>
+                </span>
               </div>
 
-              {/* Star Rating Button */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenRatingModal?.({
-                    id: doc.id,
-                    name: doc.name,
-                    type: 'doctor',
-                    currentRating: doc.rating
-                  });
-                }}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2 py-1 rounded-xl border border-amber-200 transition cursor-pointer"
-              >
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200/50">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
-                <span>{doc.rating || 4.8} ({doc.ratingsCount || 20})</span>
-              </button>
+                <span>{doc.rating || 4.8}</span>
+              </span>
             </div>
           </div>
         ))}

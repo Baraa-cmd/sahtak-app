@@ -376,164 +376,80 @@ ${pharmacy.phone ? `📞 *الهاتف:* ${pharmacy.phone}\n` : ''}🗺️ *ال
                     district: pharmacy.district
                   })
                 }
-                className={`bg-white rounded-3xl p-4 border transition-all cursor-pointer shadow-2xs hover:border-emerald-600 space-y-2.5 relative ${
+                className={`bg-white rounded-2xl p-3 border transition-all cursor-pointer shadow-2xs hover:border-emerald-600 space-y-2 relative flex flex-col justify-between ${
                   isDuty
-                    ? 'border-emerald-400 ring-2 ring-emerald-100 shadow-sm'
+                    ? 'border-blue-400 ring-2 ring-blue-100/80 shadow-xs'
                     : 'border-slate-200'
                 }`}
               >
-                {/* Row 1: Name and Action Buttons */}
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-black text-slate-900 text-sm sm:text-base leading-snug">
-                    {pharmacy.name}
-                  </h3>
-
-                  {/* Actions: Share, Favorite and Distance */}
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={(e) => handleSharePharmacy(pharmacy, e)}
-                      title="مشاركة الصيدلية"
-                      className="p-1.5 rounded-xl transition text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 shadow-2xs active:scale-95 cursor-pointer"
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                    </button>
+                {/* Header: Name, Distance & Favorite */}
+                <div className="space-y-1">
+                  <div className="flex items-start justify-between gap-1">
+                    <h3 className="font-black text-slate-900 text-xs sm:text-sm line-clamp-1 leading-snug">
+                      {pharmacy.name}
+                    </h3>
 
                     <button
                       type="button"
                       onClick={(e) => handleToggleFavorite(pharmacy.id, e)}
                       title={isFav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
-                      className={`p-1.5 rounded-xl transition cursor-pointer ${
-                        isFav
-                          ? 'text-amber-500 bg-amber-50 border border-amber-200'
-                          : 'text-slate-400 bg-slate-50 hover:bg-slate-100 border border-slate-100'
-                      }`}
+                      className="p-1 rounded-lg text-slate-400 hover:text-amber-500 shrink-0 cursor-pointer"
                     >
-                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400' : ''}`} />
+                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-500' : ''}`} />
                     </button>
-
-                    <div className="text-center bg-emerald-50/70 border border-emerald-100 px-2 py-0.5 rounded-xl shrink-0">
-                      <span className="text-xs font-black text-emerald-900 block leading-tight">
-                        {distanceFmt.full}
-                      </span>
-                      <span className="text-[9px] text-emerald-600 font-bold block leading-none">
-                        عنك
-                      </span>
-                    </div>
                   </div>
+
+                  <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 line-clamp-1">
+                    <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span>{pharmacy.district} • {distanceFmt.full}</span>
+                  </p>
                 </div>
 
-                {/* Row 2: Status Badges */}
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {/* Open / Closed Status Badge */}
+                {/* Status Badges */}
+                <div className="flex items-center gap-1 flex-wrap">
                   {pharmacy.isOpen ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-lg">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 animate-pulse" />
                       <span>مفتوحة</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-lg">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-md">
                       <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
                       <span>مغلقة</span>
                     </span>
                   )}
 
-                  {/* Separate Blue Duty Box Badge */}
                   {(pharmacy.isOnDuty || statusInfo.isOnDutyToday || statusInfo.isDutyActiveNow) && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-black bg-blue-600 text-white px-2.5 py-0.5 rounded-lg shadow-2xs border border-blue-700">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-md shadow-2xs">
                       <Moon className="w-3 h-3 text-blue-100 shrink-0" />
                       <span>مناوبة</span>
                     </span>
                   )}
-
-                  {/* Verified Badge */}
-                  {pharmacy.isVerified && (
-                    <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200/80 px-1.5 py-0.5 rounded-md"
-                      title="صيدلية مرخصة وموثقة رسمياً في نقابة الصيادلة"
-                    >
-                      <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
-                      <span>معتمدة</span>
-                    </span>
-                  )}
-
-                  {pharmacy.communityVerifiedAt && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/60 px-1.5 py-0.5 rounded-md">
-                      <CheckCircle2 className="w-3 h-3 text-amber-600 shrink-0" />
-                      <span>مؤكد مجتمعياً</span>
-                    </span>
-                  )}
                 </div>
 
-                {/* Row 3: Address */}
-                <p className="text-xs text-slate-500 flex items-center gap-1 leading-normal">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{pharmacy.district} - {pharmacy.address}</span>
-                </p>
-
                 {/* Bottom Row Actions */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-emerald-700 font-black flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200/80">
-                      <Compass className="w-3.5 h-3.5 shrink-0" />
-                      <span>مسار الخريطة</span>
-                    </span>
-
+                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-xs">
+                  <div className="flex items-center gap-1">
                     {pharmacy.phone && (
                       <a
                         href={`tel:${pharmacy.phone}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-2.5 py-1 rounded-xl shadow-2xs active:scale-95 transition cursor-pointer"
-                        title="اتصال هاتفي بالصيدلية"
+                        className="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] px-2 py-1 rounded-lg active:scale-95 transition"
                       >
-                        <Phone className="w-3 h-3 text-white shrink-0" />
+                        <Phone className="w-3 h-3" />
                         <span>اتصال</span>
                       </a>
                     )}
-
-                    {/* Star Rating Button */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onOpenRatingModal?.({
-                          id: pharmacy.id,
-                          name: pharmacy.name,
-                          type: 'pharmacy',
-                          currentRating: pharmacy.rating
-                        });
-                      }}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2 py-1 rounded-xl border border-amber-200 transition cursor-pointer"
-                    >
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
-                      <span>{pharmacy.rating || 4.8} ({pharmacy.ratingsCount || 20})</span>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onOpenCommunityReport({
-                          id: pharmacy.id,
-                          name: pharmacy.name,
-                          type: 'pharmacy',
-                          district: pharmacy.district,
-                          isOnDuty: pharmacy.isOnDuty
-                        });
-                      }}
-                      title="مشاركة تحديث أو تصحيح معلومة حول هذه الصيدلية"
-                      className="text-slate-600 hover:text-emerald-800 font-bold flex items-center gap-1 text-[11px] bg-slate-100 hover:bg-emerald-50 px-2.5 py-1 rounded-xl border border-slate-200/80 transition-colors cursor-pointer"
-                    >
-                      <MessageSquarePlus className="w-3 h-3 text-emerald-700 shrink-0" />
-                      <span>تحديث</span>
-                    </button>
-
-                    <span className="text-slate-400 flex items-center text-[11px] p-0.5">
-                      <ChevronLeft className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold text-[11px] px-2 py-1 rounded-lg border border-emerald-200/60">
+                      <Compass className="w-3 h-3" />
+                      <span>الخريطة</span>
                     </span>
                   </div>
+
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200/50">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-500 shrink-0" />
+                    <span>{pharmacy.rating || 4.8}</span>
+                  </span>
                 </div>
               </div>
             );
